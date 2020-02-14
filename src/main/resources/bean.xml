@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--配置spring容器时要扫描的包-->
+    <context:component-scan base-package="com.toulan"></context:component-scan>
+
+    <!--配置jdbcTemplate-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="runner" class="org.apache.commons.dbutils.QueryRunner"></bean>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!--连接数据库的必备信息，驱动，连接，用户名，密码-->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/springdemo"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="root"></property>
+    </bean>
+
+    <!--
+    spring中基于注解的声明式事务控制配置步骤
+    1.配置事务管理器
+    2.开启Spring对注解事务的支持
+    3.在需要注解支持的地方使用@Transactional注解
+
+    -->
+    <!-- 配置事务管理器事务管理器 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--开启Spring对注解事务的支持-->
+   <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+</beans>
